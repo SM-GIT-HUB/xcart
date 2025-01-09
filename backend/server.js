@@ -1,6 +1,7 @@
 import express from "express"
 import "dotenv/config"
 import authRoutes from "./routes/auth.route.js"
+import productRoutes from "./routes/product.route.js"
 
 import dbConnect from "./lib/database/db.js"
 import cookieParser from "cookie-parser"
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 app.listen(PORT, async() => {
     dbConnect();
