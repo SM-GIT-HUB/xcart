@@ -1,5 +1,6 @@
 import productModel from "../lib/database/models/product.model.js"
 import { redis } from "../lib/redis.js"
+import cloudinary from "../lib/cloudinary.js"
 
 async function getAllProducts(req, res)
 {
@@ -38,5 +39,70 @@ async function getFeaturedProducts(req, res)
     }
 }
 
+async function createProduct(req, res)
+{
+    try {
+        const { name, description, price, image, category } = req.body;
 
-export { getAllProducts, getFeaturedProducts }
+        let cloudinaryResponse = null;
+
+        if (image) {
+            cloudinaryResponse = await cloudinary.uploader.upload(image, { folder: "products" });
+        }
+
+        const product = await productModel.create({
+            name,
+            description,
+            price,
+            image: cloudinaryResponse?.secure_url? cloudinaryResponse.secure_url : "",
+            category
+        })
+
+        res.status(201).json({ product: {
+            _id: product._id,
+            name,
+            description,
+            price,
+            image: product.image,
+            category
+        } })
+    }
+    catch(err) {
+        console.log("error in createproduct:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+async function deleteProduct(req, res)
+{
+    try {
+        const product = await productModel.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        if (product.image)
+        {
+            const imageId = product.image.split('/').pop().split('.')[0];
+
+            try {
+                await cloudinary.uploader.destroy(`products/${imageId}`);
+                console.log("deleted image in cloudinary");
+            }
+            catch(err) {
+                throw new Error("error in cloudinary delete");
+            }
+        }
+
+        await productModel.deleteOne({ _id: product._id });
+        res.status(200).json({ message: "Product deleted" });
+    }
+    catch(err) {
+        console.log("error in createproduct:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+
+export { getAllProducts, getFeaturedProducts, createProduct, deleteProduct }
