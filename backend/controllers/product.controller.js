@@ -99,10 +99,71 @@ async function deleteProduct(req, res)
         res.status(200).json({ message: "Product deleted" });
     }
     catch(err) {
-        console.log("error in createproduct:", err.message);
+        console.log("error in deleteproduct:", err.message);
         res.status(500).json({ message: "Something went wrong" });
     }
 }
 
+async function getRecommendedProducts(req, res)
+{
+    try {
+        const products = await productModel.aggregate([
+            { $sample: { size: 3 } },
+            { $project: { _id: 1, name: 1, description: 1, image: 1, price: 1 } }
+        ])
+    }
+    catch(err) {
+        console.log("error in getrecommended:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
 
-export { getAllProducts, getFeaturedProducts, createProduct, deleteProduct }
+async function getProductsByCategory(req, res)
+{
+    try {
+        const { category } = req.params;
+
+        const products = await productModel.find({ category }).lean();
+        res.status(200).json({ products });
+    }
+    catch(err) {
+        console.log("error in getproductsbycategory:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+async function toggleFeaturedProduct(req, res)
+{
+    try {
+        const product = await productModel.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        product.isFeatured = !product.isFeatured;
+        await product.save();
+
+        await updateFeaturedProductsCache();
+
+        res.status(200).json({ product });
+    }
+    catch(err) {
+        console.log("error in togglefeatured:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+async function updateFeaturedProductsCache()
+{
+    try {
+        const products = await productModel.find({ isFeatured: true }).lean();
+        await redis.set("featured_products", JSON.stringify(products));
+    }
+    catch(err) {
+        console.log("error in updateFeaturedcache:", err.message);
+    }
+}
+
+
+export { getAllProducts, getFeaturedProducts, getRecommendedProducts, getProductsByCategory, toggleFeaturedProduct, createProduct, deleteProduct }
