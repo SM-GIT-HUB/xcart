@@ -12,7 +12,7 @@ async function protectRoute(req, res, next)
 
         try {
             const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-            const user = await userModel.findById(decoded.userId).select("_id email name role");
+            const user = await userModel.findById(decoded.userId).select("_id email name cartItems role");
 
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
