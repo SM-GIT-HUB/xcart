@@ -15,7 +15,7 @@ async function analyticsData(req, res)
         res.status(200).json({ analyticsData, dailySalesData });
     }
     catch(err) {
-        console.log("error in :", err.message);
+        console.log("error in analyticsdata:", err.message);
         res.status(500).json({ message: "Something went wrong" });
     }
 }

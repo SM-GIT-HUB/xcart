@@ -154,10 +154,11 @@ async function refreshToken(req, res)
 async function getProfile(req, res)
 {
     try {
-
+        res.status(200).json({ user: req.user });
     }
     catch(err) {
-
+        console.log("error in getprofile:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
     }
 }
 
