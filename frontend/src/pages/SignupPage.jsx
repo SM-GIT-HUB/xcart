@@ -2,17 +2,19 @@ import { ArrowRight, Loader, Lock, Mail, User, UserPlus } from "lucide-react"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useState } from "react"
+import useUser from "../store/useUser.js"
 
 function SignupPage() {
-  const loading = 0;
   const [formData, setFormData] = useState({
     name: "", email: "", password: "", confirmPassword: ""
   })
+
+  const { loading, signup } = useUser();
   
-  async function handleSubmit(e)
+  function handleSubmit(e)
   {
     e.preventDefault();
-    console.log(formData);
+    signup(formData);
   }
   
   const inputClasses = 'block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm';
