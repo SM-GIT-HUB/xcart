@@ -9,7 +9,6 @@ import LoadingSpinner from "./components/LoadingSpinner.jsx"
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUser();
-  console.log(user);
 
   useEffect(() => {
     checkAuth();

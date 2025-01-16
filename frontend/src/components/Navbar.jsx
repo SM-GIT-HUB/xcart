@@ -1,6 +1,6 @@
 import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react"
 import { Link } from "react-router-dom"
-import useUser from "../store/useUser";
+import useUser from "../store/useUser"
 
 function Navbar() {
   const { user, logout } = useUser();
