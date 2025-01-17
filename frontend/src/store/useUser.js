@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { create } from "zustand"
 import { toastObj } from "../lib/toast.js"
 import toast from "react-hot-toast"

@@ -18,7 +18,7 @@ function HomePage() {
           Explore Our Categories
         </h1>
 
-        <p className="text-center text-xl text-gray-300 mb-12 mt-2">
+        <p className="text-center text-xl text-gray-400 mb-12 mt-2">
           Discover the latest trends in eco-friendly fashion
         </p>
 

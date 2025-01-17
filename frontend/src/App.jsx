@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar"
 import useUser from "./store/useUser.js"
 import { useEffect } from "react"
 import LoadingSpinner from "./components/LoadingSpinner.jsx"
+import AdminPage from "./pages/AdminPage.jsx"
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUser();
@@ -37,6 +38,7 @@ function App() {
           <Route path="/" element={<HomePage/>} />
           <Route path="/signup" element={!user? <SignupPage/> : <Navigate to={'/'} />} />
           <Route path="/login" element={!user? <LoginPage/> : <Navigate to={'/'} />} />
+          <Route path="/secret-dashboard" element={user?.role == "admin"? <AdminPage/> : <Navigate to={'/'} />} />
         </Routes>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import productModel from "../lib/database/models/product.model.js"
 import { redis } from "../lib/redis.js"
 import cloudinary from "../lib/cloudinary.js"
+import { Readable } from "stream";
 
 async function getAllProducts(req, res)
 {
@@ -42,19 +43,44 @@ async function getFeaturedProducts(req, res)
 async function createProduct(req, res)
 {
     try {
-        const { name, description, price, image, category } = req.body;
+        if (req.fileValidationError) {
+            return res.status(400).json({ message: req.fileValidationError });
+        }
+
+        const { name, description, price, category } = req.body;
 
         let cloudinaryResponse = null;
+        let imageUrl = "";
 
-        if (image) {
-            cloudinaryResponse = await cloudinary.uploader.upload(image, { folder: "products" });
+        if (req.file)
+        {
+            const readableStream = Readable.from(req.file.buffer);
+
+            await new Promise((resolve, reject) => {
+                const cloudinaryUploadStream = cloudinary.uploader.upload_stream(
+                    { folder: "products" },
+                    (err, result) => {
+                        if (err) {
+                            return reject(new Error(err.message));
+                        }
+                        imageUrl = result.secure_url;
+                        resolve();
+                    }
+                )
+
+                readableStream.pipe(cloudinaryUploadStream);
+            })
         }
+
+        // if (image) {
+        //     cloudinaryResponse = await cloudinary.uploader.upload(image, { folder: "products" });
+        // }
 
         const product = await productModel.create({
             name,
             description,
             price,
-            image: cloudinaryResponse?.secure_url? cloudinaryResponse.secure_url : "",
+            image: imageUrl,
             category
         })
 
