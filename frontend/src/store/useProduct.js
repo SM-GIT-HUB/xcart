@@ -9,7 +9,14 @@ const useProduct = create((set, get) => ({
     setProducts: (products) => set({ products }),
 
     createProduct: async(newProduct) => {
+        const { name, description, price, category } = newProduct;
+        
+        if (!name || !description || !price || !category || !newProduct.image) {
+            return toast.error("Please fill in all details");
+        }
+        
         set({ loading: true });
+        toast.dismiss();
 
         try {
             toast.loading("Please wait...", toastObj);
@@ -19,10 +26,7 @@ const useProduct = create((set, get) => ({
             formData.append("description", newProduct.description);
             formData.append("price", newProduct.price);
             formData.append("category", newProduct.category);
-
-            if (newProduct.image) {
-                formData.append("image", newProduct.image);
-            }
+            formData.append("image", newProduct.image);
 
             const response = await apios.post("/products", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
@@ -35,7 +39,7 @@ const useProduct = create((set, get) => ({
         }
         catch(err) {
             toast.dismiss();
-            toast.error(err.message, toastObj);
+            toast.error(err.response.data.message || err.message, toastObj);
         }
         finally {
             set({ loading: false });

@@ -49,28 +49,28 @@ async function createProduct(req, res)
 
         const { name, description, price, category } = req.body;
 
-        let cloudinaryResponse = null;
         let imageUrl = "";
 
-        if (req.file)
-        {
-            const readableStream = Readable.from(req.file.buffer);
-
-            await new Promise((resolve, reject) => {
-                const cloudinaryUploadStream = cloudinary.uploader.upload_stream(
-                    { folder: "products" },
-                    (err, result) => {
-                        if (err) {
-                            return reject(new Error(err.message));
-                        }
-                        imageUrl = result.secure_url;
-                        resolve();
-                    }
-                )
-
-                readableStream.pipe(cloudinaryUploadStream);
-            })
+        if (!name || !description || !price || !category || !req.file) {
+            return res.status(404).json({ message: "Please fill in all the details" });
         }
+
+        const readableStream = Readable.from(req.file.buffer);
+
+        await new Promise((resolve, reject) => {
+            const cloudinaryUploadStream = cloudinary.uploader.upload_stream(
+                { folder: "products" },
+                (err, result) => {
+                    if (err) {
+                        return reject(new Error(err.message));
+                    }
+                    imageUrl = result.secure_url;
+                    resolve();
+                }
+            )
+
+            readableStream.pipe(cloudinaryUploadStream);
+        })
 
         // if (image) {
         //     cloudinaryResponse = await cloudinary.uploader.upload(image, { folder: "products" });
