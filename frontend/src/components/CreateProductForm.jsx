@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Loader, PlusCircle, Upload, CircleX } from "lucide-react"
-import toast, {  } from "react-hot-toast"
+import toast from "react-hot-toast"
 import useProduct from "../store/useProduct"
 
 const categories = ["jeans", "t-shirts", "shoes", "glasses", "jackets", "suits", "bags"];
@@ -17,7 +17,7 @@ function CreateProductForm() {
 
   const [newProduct, setNewProduct] = useState(state);
 
-  const { loading, createProduct, products } = useProduct();
+  const { loading, createProduct } = useProduct();
 
   async function handleSubmit(e)
   {
@@ -25,6 +25,7 @@ function CreateProductForm() {
 
     await createProduct(newProduct);
     setNewProduct(state);
+    document.getElementById('image').value = "";
   }
 
   function handleImageChange(e)
@@ -44,6 +45,7 @@ function CreateProductForm() {
   function removeImage()
   {
     setNewProduct({ ...newProduct, image: "" });
+    document.getElementById('image').value = "";
   }
 
   return (

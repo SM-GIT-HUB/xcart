@@ -44,6 +44,50 @@ const useProduct = create((set, get) => ({
         finally {
             set({ loading: false });
         }
+    },
+    
+    fetchAllProducts: async() => {
+        set({ loading: true });
+        toast.dismiss();
+
+        try {
+            const response = await apios.get('/products');
+            set({ products: response.data.products });
+        }
+        catch(err) {
+            toast.error(err.response.data.message || err.message, toastObj);
+        }
+        finally {
+            set({ loading: false });
+        }
+    },
+
+    deleteProduct: async(productId) => {},
+
+    toggleFeaturedProduct: async(productId) => {
+        set({ loading: true });
+        toast.dismiss();
+
+        try {
+            const response = await apios.patch(`/products/${productId}`);
+
+            const products = get().products.map((p) => {
+                if (p._id == productId) {
+                    return response.data.product;
+                }
+                else
+                    return p;
+            })
+
+            set({ products });
+            toast.success("Featured toogled", toastObj);
+        }
+        catch(err) {
+            toast.error(err.response.data.message || err.message, toastObj);
+        }
+        finally {
+            set({ loading: false });
+        }
     }
 }))
 

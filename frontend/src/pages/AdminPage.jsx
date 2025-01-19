@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react"
 import { motion } from "framer-motion"
 import CreateProductForm from "../components/CreateProductForm"
 import ProductsList from "../components/ProductsList"
 import AnalyticsTab from "../components/AnalyticsTab"
+import useProduct from "../store/useProduct"
 
 const tabs = [
 	{ id: "create", label: "Create Product", icon: PlusCircle },
@@ -13,6 +14,11 @@ const tabs = [
 
 function AdminPage() {
   const [activeTab, setActiveTab] = useState("create");
+  const { fetchAllProducts } = useProduct();
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, [fetchAllProducts])
 
   const tabCls1 = "bg-emerald-600 text-white";
   const tabCls2 = "bg-gray-700 text-gray-300 hover:bg-gray-600";
