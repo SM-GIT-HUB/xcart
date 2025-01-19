@@ -84,14 +84,7 @@ async function createProduct(req, res)
             category
         })
 
-        res.status(201).json({ product: {
-            _id: product._id,
-            name,
-            description,
-            price,
-            image: product.image,
-            category
-        } })
+        res.status(201).json({ product })
     }
     catch(err) {
         console.log("error in createproduct:", err.message);

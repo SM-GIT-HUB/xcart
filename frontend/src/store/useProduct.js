@@ -62,7 +62,29 @@ const useProduct = create((set, get) => ({
         }
     },
 
-    deleteProduct: async(productId) => {},
+    deleteProduct: async(productId) => {
+        set({ loading: true });
+        toast.dismiss();
+
+        try {
+            toast.loading("Please wait...", toastObj);
+
+            await apios.delete(`/products/${productId}`);
+
+            const products = get().products.filter((p) => (p._id != productId));
+            set({ products });
+
+            toast.dismiss();
+            toast.success("Product deleted", toastObj);
+        }
+        catch(err) {
+            toast.dismiss();
+            toast.error(err.response.data.message || err.message, toastObj);
+        }
+        finally {
+            set({ loading: false });
+        }
+    },
 
     toggleFeaturedProduct: async(productId) => {
         set({ loading: true });
