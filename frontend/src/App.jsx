@@ -8,6 +8,7 @@ import { useEffect } from "react"
 import LoadingSpinner from "./components/LoadingSpinner.jsx"
 import AdminPage from "./pages/AdminPage.jsx"
 import CategoryPage from "./pages/CategoryPage.jsx"
+import CartPage from "./pages/CartPage.jsx"
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUser();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/login" element={!user? <LoginPage/> : <Navigate to={'/'} />} />
           <Route path="/secret-dashboard" element={user?.role == "admin"? <AdminPage/> : <Navigate to={'/'} />} />
           <Route path="/category/:category" element={<CategoryPage/>} />
+          <Route path="/cart" element={user? <CartPage/> : <Navigate to={'/login'} />} />
         </Routes>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import productModel from "../lib/database/models/product.model.js"
 
 async function addToCart(req, res)
 {
@@ -15,6 +16,9 @@ async function addToCart(req, res)
         }
 
         await user.save();
+
+        await user.populate("cartItems.product");
+
         res.status(202).json({ message: "cart updated", cartItems: user.cartItems })
     }
     catch(err) {
@@ -34,6 +38,8 @@ async function removeFromCart(req, res)
             user.cartItems = user.cartItems.filter((it) => it.product.toString() != productId);
             await user.save();
         }
+
+        await user.populate("cartItems.product");
 
         res.status(200).json({ message: "Product deleted from cart", cartItems: user.cartItems });
     }
@@ -64,6 +70,9 @@ async function updateQuantity(req, res)
         }
 
         await user.save();
+
+        await user.populate("cartItems.product");
+
         res.status(202).json({ message: "cart updated", cartItems: user.cartItems });
     }
     catch(err) {
@@ -76,17 +85,9 @@ async function getCartProducts(req, res)
 {
     try {
         const user = req.user;
+        await user.populate("cartItems.product");
 
-        let cartItems = user.cartItems;
-
-        cartItems = await Promise.all(
-            cartItems.map(async(it) => {
-                await it.populate("product");
-                return it;
-            })
-        )
-
-        res.status(200).json({ cartItems });
+        res.status(200).json({ cartItems: user.cartItems });
     }
     catch(err) {
         console.log("error in getcart:", err.message);

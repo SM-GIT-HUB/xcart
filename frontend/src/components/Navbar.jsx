@@ -1,11 +1,19 @@
 import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react"
 import { Link } from "react-router-dom"
 import useUser from "../store/useUser"
+import useCart from "../store/useCart"
+import { useEffect } from "react"
 
 function Navbar() {
   const { user, logout } = useUser();
   const isAdmin = (user?.role == "admin");
-  const cart = [1, 2, 3, 4];
+  const { cart, getCartItems } = useCart();
+
+  useEffect(() => {
+    if (user) {
+      getCartItems();
+    }
+  }, [user, getCartItems])
 
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md
@@ -26,10 +34,13 @@ function Navbar() {
                 <Link to={'cart'} className="relative group flex items-center text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out">
                   <ShoppingCart className="inline-block mr-1 " size={20} />
                   <span className="hidden sm:inline">Cart</span>
-                  <span className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2
-                  py-0.5 text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out">
-                    {cart.length}
-                  </span>
+                  {
+                    cart &&
+                    <span className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2
+                    py-0.5 text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out">
+                      {cart.length}
+                    </span>
+                  }
                 </Link>
               )
             }
