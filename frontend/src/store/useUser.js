@@ -10,7 +10,6 @@ const useUser = create((set, get) => ({
 
     signup: async({ name, email, password, confirmPassword }) => {
         set({ loading: true });
-        toast.dismiss();
 
         try {
             if (password.length < 4) {
@@ -26,11 +25,9 @@ const useUser = create((set, get) => ({
             const response = await apios.post('/auth/signup', { name, email, password });
             set({ user: response.data.user });
 
-            toast.dismiss();
             toast.success("Signup successful", toastObj);
         }
         catch(err) {
-            toast.dismiss();
             toast.error(err.response?.data.message || err.message, toastObj);
         }
         finally {
@@ -40,7 +37,6 @@ const useUser = create((set, get) => ({
 
     login: async({ email, password }) => {
         set({ loading: true });
-        toast.dismiss();
 
         try {
             toast.loading("Please wait...", toastObj);
@@ -48,11 +44,9 @@ const useUser = create((set, get) => ({
             const response = await apios.post('/auth/login', { email, password });
             set({ user: response.data.user });
 
-            toast.dismiss();
             toast.success("Login successful", toastObj);
         }
         catch(err) {
-            toast.dismiss();
             toast.error(err.response?.data.message || err.message, toastObj);
         }
         finally {
@@ -62,7 +56,6 @@ const useUser = create((set, get) => ({
 
     logout: async() => {
         set({ loading: true });
-        toast.dismiss();
 
         try {
             toast.loading("Please wait...", toastObj);
@@ -70,11 +63,9 @@ const useUser = create((set, get) => ({
             await apios.post('/auth/logout');
             set({ user: null });
 
-            toast.dismiss();
             toast.success("Logged out", toastObj);
         }
         catch(err) {
-            toast.dismiss();
             toast.error(err.response.data.message || err.message, toastObj);
         }
         finally {

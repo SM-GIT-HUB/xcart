@@ -18,7 +18,6 @@ function CreateProductForm() {
   const [newProduct, setNewProduct] = useState(state);
 
   const { loading, createProduct, products } = useProduct();
-  console.log(products);
 
   async function handleSubmit(e)
   {
