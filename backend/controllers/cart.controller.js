@@ -1,4 +1,3 @@
-import productModel from "../lib/database/models/product.model.js"
 
 async function addToCart(req, res)
 {
@@ -65,7 +64,7 @@ async function updateQuantity(req, res)
         if (quantity == 0) {
             user.cartItems.filter((it) => it.product.toString() != productId);
         }
-        else if (quantity > 1) {
+        else if (quantity > 0) {
             item.quantity = quantity;
         }
 

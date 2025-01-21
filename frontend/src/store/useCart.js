@@ -43,7 +43,7 @@ const useCart = create((set, get) => ({
                 }
                 else
                     return it;
-            }) : [ ...cart, { ...product, quantity: 1 } ]
+            }) : [ ...cart, { product, quantity: 1 } ]
 
             set({ cart });
             get().calculateTotal();
@@ -58,9 +58,46 @@ const useCart = create((set, get) => ({
         }
     },
 
-    updateQuantity: async(productId, quantity) => {},
+    updateQuantity: async(productId, quantity) => {
+        try {
+            if (quantity == 0) {
+                return get().removeFromCart(productId);
+            }
 
-    removeFromCart: async(productId) => {},
+            await apios.put(`/cart/${productId}`, { quantity });
+
+            const cart = get().cart.map((it) => {
+                return (it.product._id == productId)? { ...it, quantity } : it;
+            })
+
+            set({ cart });
+
+            toast.success("Updated your cart", toastObj);
+        }
+        catch(err) {
+            toast.error(err?.response?.data?.message || err.message, toastObj);
+        }
+    },
+
+    removeFromCart: async(productId) => {
+        set({ loading: true });
+
+        try {
+            toast.loading("Please wait...", toastObj);
+            await apios.delete('/cart', { data: { productId } });
+
+            const cart = get().cart.filter((it) => it.product._id != productId);
+            set({ cart });
+
+            toast.success("Product removed", toastObj);
+        }
+        catch(err) {
+            toast.error(err?.response?.data?.message || err.message, toastObj);
+        }
+        finally {
+            set({ loading: false });
+        }
+    },
 
     calculateTotal: () => {
         const { cart, coupon } = get();
