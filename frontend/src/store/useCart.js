@@ -58,9 +58,13 @@ const useCart = create((set, get) => ({
         }
     },
 
+    updateQuantity: async(productId, quantity) => {},
+
+    removeFromCart: async(productId) => {},
+
     calculateTotal: () => {
         const { cart, coupon } = get();
-        const subTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const subTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
         let total = subTotal;
 
@@ -71,6 +75,7 @@ const useCart = create((set, get) => ({
         }
 
         set({ subTotal, total });
+        return { subTotal, total };
     }
 }))
 
