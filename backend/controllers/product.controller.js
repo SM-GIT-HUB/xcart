@@ -127,9 +127,11 @@ async function getRecommendedProducts(req, res)
 {
     try {
         const products = await productModel.aggregate([
-            { $sample: { size: 3 } },
+            { $sample: { size: 4 } },
             { $project: { _id: 1, name: 1, description: 1, image: 1, price: 1 } }
         ])
+
+        res.status(200).json({ products });
     }
     catch(err) {
         console.log("error in getrecommended:", err.message);

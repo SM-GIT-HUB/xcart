@@ -9,6 +9,7 @@ const useCart = create((set, get) => ({
     total: 0,
     subTotal: 0,
     loading: false,
+    isCouponApplied: false,
 
     getCartItems: async() => {
         set({ loading: true });
@@ -71,6 +72,7 @@ const useCart = create((set, get) => ({
             })
 
             set({ cart });
+            get().calculateTotal();
 
             toast.success("Updated your cart", toastObj);
         }
@@ -113,6 +115,17 @@ const useCart = create((set, get) => ({
 
         set({ subTotal, total });
         return { subTotal, total };
+    },
+
+    clearCart: async() => {
+        try {
+            await apios.put('/cart/clear-cart');
+
+            set({ cart: [], coupon: null, total: 0, subTotal: 0, isCouponApplied: false });
+        }
+        catch(err) {
+            console.log(err.response?.data?.message || err.message);
+        }
     }
 }))
 

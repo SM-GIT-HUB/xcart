@@ -15,15 +15,15 @@ async function createCheckoutSession(req, res)
         let totalAmount = 0;
 
         const lineItems = products.map((p) => {
-            const amount = Math.round(p.price * 100);
+            const amount = Math.round(p.product.price * 100);
             totalAmount += amount * p.quantity;
 
             return {
                 price_data: {
                     currency: "usd",
                     product_data: {
-                        name: p.name,
-                        image: [p.image]
+                        name: p.product.name,
+                        images: [p.product.image]
                     },
                     unit_amount: amount
                 },
@@ -54,9 +54,9 @@ async function createCheckoutSession(req, res)
                 couponCode: coupon?.code || "",
                 products: JSON.stringify(
                     products.map((p) => ({
-                        product: p._id,
+                        product: p.product._id,
                         quantity: p.quantity,
-                        price: p.price
+                        price: p.product.price
                     }))
                 )
             }
@@ -79,7 +79,14 @@ async function checkoutSuccess(req, res)
     try {
         const { sessionId } = req.body;
         
-        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        const [session, order] = await Promise.all([
+            await stripe.checkout.sessions.retrieve(sessionId),
+            await orderModel.findOne({ stripeSessionId: sessionId })
+        ])
+
+        if (order) {
+            return res.status(201).json({ success: true, message: "Payment successful, order already placed", orderId: order._id });
+        }
 
         if (session.payment_status == "paid")
         {
@@ -132,6 +139,8 @@ async function check(code)
 async function createNewCoupon(userId)
 {
     let code = "";
+
+    await couponModel.deleteOne({ userId });
 
     do {
         code = "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase();

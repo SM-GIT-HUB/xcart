@@ -94,5 +94,19 @@ async function getCartProducts(req, res)
     }
 }
 
+async function clearCart(req, res)
+{
+    try {
+        req.user.cartItems = [];
+        await req.user.save();
 
-export { addToCart, removeFromCart, updateQuantity, getCartProducts }
+        res.status(200).json({ success: true, message: "Cart cleared" });
+    }
+    catch(err) {
+        console.log("error in clearcart:", err.message);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+
+export { addToCart, removeFromCart, updateQuantity, getCartProducts, clearCart }

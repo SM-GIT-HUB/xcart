@@ -9,6 +9,8 @@ import LoadingSpinner from "./components/LoadingSpinner.jsx"
 import AdminPage from "./pages/AdminPage.jsx"
 import CategoryPage from "./pages/CategoryPage.jsx"
 import CartPage from "./pages/CartPage.jsx"
+import PurchaseSuccess from "./pages/PurchaseSuccess.jsx"
+import PurchaseCancel from "./pages/PurchaseCancel.jsx"
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUser();
@@ -43,6 +45,8 @@ function App() {
           <Route path="/secret-dashboard" element={user?.role == "admin"? <AdminPage/> : <Navigate to={'/'} />} />
           <Route path="/category/:category" element={<CategoryPage/>} />
           <Route path="/cart" element={user? <CartPage/> : <Navigate to={'/login'} />} />
+          <Route path="/purchase-success" element={user? <PurchaseSuccess/> : <Navigate to={'/login'} />} />
+          <Route path="/purchase-cancel" element={user? <PurchaseCancel/> : <Navigate to={'/login'} />} />
         </Routes>
       </div>
     </div>

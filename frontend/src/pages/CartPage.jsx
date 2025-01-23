@@ -3,6 +3,9 @@ import { motion } from "framer-motion"
 import { ShoppingCart } from "lucide-react"
 import { Link } from "react-router-dom"
 import CartItem from "../components/CartItem"
+import PeopleAlsoBought from "../components/PeopleAlsoBought"
+import OrderSummary from "../components/OrderSummary"
+import GiftCouponCard from "../components/GiftCouponCard"
 
 function CartPage() {
   const { cart } = useCart();
@@ -28,7 +31,7 @@ function CartPage() {
                 </div>
               )
             }
-						{cart.length > 0 && <></>}
+						{cart.length > 0 && <PeopleAlsoBought />}
 					</motion.div>
 
 					{
@@ -37,8 +40,8 @@ function CartPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }} >
-                {/* <OrderSummary />
-                <GiftCouponCard /> */}
+                <OrderSummary />
+                <GiftCouponCard />
               </motion.div>
             )
           }
