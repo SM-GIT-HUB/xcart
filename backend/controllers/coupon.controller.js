@@ -24,9 +24,7 @@ async function validateCoupon(req, res)
 
         if (coupon.expirationDate < new Date())
         {
-            coupon.isActive = false;
-            await coupon.save();
-
+            await couponModel.deleteOne({ _id: coupon._id });
             return res.status(404).json({ message: "Coupon expired" });
         }
 

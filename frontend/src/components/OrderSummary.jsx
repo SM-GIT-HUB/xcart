@@ -8,7 +8,10 @@ import apios from "../lib/axios"
 const stripePromise = loadStripe(`pk_test_51Qg9PgHkoMIPy4dKXWKlwdbJOnNjcIRg3QyDXZAIwhoCNjP4DsYB240Wj6ecpODllezXWAuN3pGRkuPH8Sg57rgn00Hmk2kRp5`);
 
 function OrderSummary() {
-  const { total, subTotal, coupon, cart } = useCart();
+  const { total, subTotal, isCouponApplied, coupon, cart } = useCart();
+
+  let obj = { coupon: (coupon && isCouponApplied)? coupon.code : null };
+  console.log(coupon, isCouponApplied, obj);
 
   const savings = subTotal - total;
 	const formattedSubtotal = subTotal.toFixed(2);
@@ -19,10 +22,9 @@ function OrderSummary() {
   {
     const stripe = await stripePromise;
     
-    const response = await apios.post('/payments/create-checkout-session', { products: cart, coupon: coupon? coupon.code : null });
+    const response = await apios.post('/payments/create-checkout-session', { products: cart, couponCode: (coupon && isCouponApplied)? coupon.code : null });
     
     const session = response.data;
-    console.log(session);
 
     const result = await stripe.redirectToCheckout({
       sessionId: session.id
@@ -57,7 +59,7 @@ function OrderSummary() {
           }
 
           {
-            coupon && (
+            isCouponApplied && coupon && (
               <dl className='flex items-center justify-between gap-4'>
                 <dt className='text-base font-normal text-gray-300'>Coupon ({coupon?.code})</dt>
                 <dd className='text-base font-medium text-emerald-400'>-{coupon?.discountPercentage}%</dd>

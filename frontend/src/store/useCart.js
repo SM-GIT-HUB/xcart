@@ -11,6 +11,35 @@ const useCart = create((set, get) => ({
     loading: false,
     isCouponApplied: false,
 
+    getMyCoupon: async() => {
+        try {
+            const response = await apios.get('/coupons');
+            set({ coupon: response.data.coupon });
+        }
+        catch(err) {
+            toast.error(err.response?.data?.message || err.message, toastObj);
+        }
+    },
+
+    applyCoupon: async(code) => {
+        try {
+            await apios.post('/coupons/validate', { code });
+            set({ isCouponApplied: true });
+            get().calculateTotal();
+
+            toast.success("Coupon applied", toastObj);
+        }
+        catch(err) {
+            toast.error(err.response?.data?.message || err.message, toastObj);
+        }
+    },
+
+    removeCoupon: () => {
+        set({ isCouponApplied: false });
+        get().calculateTotal();
+        toast.success("Coupon removed", toastObj);
+    },
+
     getCartItems: async() => {
         set({ loading: true });
 
@@ -102,12 +131,12 @@ const useCart = create((set, get) => ({
     },
 
     calculateTotal: () => {
-        const { cart, coupon } = get();
+        const { cart, coupon, isCouponApplied } = get();
         const subTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
         let total = subTotal;
 
-        if (coupon)
+        if (coupon && isCouponApplied)
         {
             const discount = subTotal * (coupon.discountPercentage / 100);
             total = subTotal - discount;

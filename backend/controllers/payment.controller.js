@@ -62,10 +62,6 @@ async function createCheckoutSession(req, res)
             }
         })
 
-        if (totalAmount >= 20000) {
-            await createNewCoupon(req.user._id);
-        }
-
         res.status(201).json({ id: session.id, totalAmount: totalAmount / 100 });
     }
     catch(err) {
@@ -103,6 +99,10 @@ async function checkoutSuccess(req, res)
                 stripeSessionId: session.id
             })
 
+            if (session.amount_total >= 20000) {
+                await createNewCoupon(req.user._id);
+            }
+
             res.status(201).json({ success: true, message: "Payment successful, order placed", orderId: newOrder._id });
         }
         else
@@ -125,26 +125,9 @@ async function createStripeCoupon(perc)
     return coupon.id;
 }
 
-async function check(code)
-{
-    const coupon = await couponModel.findOne({ code });
-
-    if (coupon) {
-        return true;
-    }
-    else
-        return false;
-}
-
 async function createNewCoupon(userId)
 {
-    let code = "";
-
-    await couponModel.deleteOne({ userId });
-
-    do {
-        code = "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    } while (await check(code));
+    const code = "GIFT" + Math.random().toString(36).substring(2).toUpperCase();
 
     const newCoupon = await couponModel.create({
         code,
