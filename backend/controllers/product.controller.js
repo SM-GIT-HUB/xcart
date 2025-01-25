@@ -1,7 +1,7 @@
 import productModel from "../lib/database/models/product.model.js"
 import { redis } from "../lib/redis.js"
 import cloudinary from "../lib/cloudinary.js"
-import { Readable } from "stream";
+import { Readable } from "stream"
 
 async function getAllProducts(req, res)
 {
@@ -21,7 +21,7 @@ async function getFeaturedProducts(req, res)
         let featuredProducts = await redis.get("featured_products");
 
         if (featuredProducts) {
-            return res.json(JSON.parse(featuredProducts));
+            return res.json({ featuredProducts: JSON.parse(featuredProducts) });
         }
 
         featuredProducts = await productModel.find({ isFeatured: true }).lean();

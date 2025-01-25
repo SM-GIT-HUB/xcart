@@ -122,6 +122,21 @@ const useProduct = create((set, get) => ({
         finally {
             set({ loading: false });
         }
+    },
+
+    fetchFeaturedProducts: async() => {
+        set({ loading: true });
+
+        try {
+            const response = await apios.get('/products/featured');
+            set({ products: response.data.featuredProducts });
+        }
+        catch(err) {
+            toast.error(err.response?.data?.message || err.message, toastObj);
+        }
+        finally {
+            set({ loading: false });
+        }
     }
 }))
 
