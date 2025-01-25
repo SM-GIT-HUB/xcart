@@ -43,10 +43,10 @@ async function getAnalytics()
 async function getDailySalesData(startDate, endDate)
 {
     const dailySalesData = await orderModel.aggregate([
-        { $match: { $createdAt: { $gte: startDate, $lte: endDate } } },
+        { $match: { createdAt: { $gte: startDate, $lte: endDate } } },
         {
             $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: "Asia/Kolkata" } },
                 sales: { $sum: 1 },
                 revenue: { $sum: "$totalAmount" }
             }
@@ -56,7 +56,7 @@ async function getDailySalesData(startDate, endDate)
 
     const dateArray = getDatesInRange(startDate, endDate);
 
-    return dateArray.map((d) => {
+    return dateArray.map((date) => {
         const foundData = dailySalesData.find((it) => it._id == date);
 
         return { date, sales: foundData?.sales || 0, revenue: foundData?.revenue || 0 };

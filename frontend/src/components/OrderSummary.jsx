@@ -10,9 +10,6 @@ const stripePromise = loadStripe(`pk_test_51Qg9PgHkoMIPy4dKXWKlwdbJOnNjcIRg3QyDX
 function OrderSummary() {
   const { total, subTotal, isCouponApplied, coupon, cart } = useCart();
 
-  let obj = { coupon: (coupon && isCouponApplied)? coupon.code : null };
-  console.log(coupon, isCouponApplied, obj);
-
   const savings = subTotal - total;
 	const formattedSubtotal = subTotal.toFixed(2);
 	const formattedTotal = total.toFixed(2);

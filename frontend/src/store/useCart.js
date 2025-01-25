@@ -119,6 +119,7 @@ const useCart = create((set, get) => ({
 
             const cart = get().cart.filter((it) => it.product._id != productId);
             set({ cart });
+            get().calculateTotal();
 
             toast.success("Product removed", toastObj);
         }
