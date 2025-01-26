@@ -19,10 +19,6 @@ const __dirname = path.resolve()
 app.use(express.json());
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.send("Hello world").status(200);
-})
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use('/api/cart', cartRoutes);
@@ -33,7 +29,7 @@ app.use('/api/analytics', analyticsRoutes);
 if (process.env.NODE_ENV != "development")
 {
     app.use(express.static(path.join(__dirname, "/frontend/dist")));
-    
+
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
     })
