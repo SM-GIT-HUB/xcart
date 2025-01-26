@@ -112,12 +112,10 @@ let refreshPromise = null;
 
 apios.interceptors.response.use(
     (response) => {
-        console.log("here", 115);
         return response;
     },
     async(err) => {
         const originalRequest = err.config;
-        console.log("here", 117);
 
         if (err.response?.status == 401 && !originalRequest._retry)
         {
