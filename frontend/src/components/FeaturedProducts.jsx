@@ -10,7 +10,7 @@ function FeaturedProducts({ featuredProducts }) {
 
   function nextSlide()
   {
-    setCurrentIndex(currentIndex + itemsPerPage)
+    setCurrentIndex(currentIndex + itemsPerPage);
   }
 
   function prevSlide()

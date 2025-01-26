@@ -52,7 +52,7 @@ function PurchaseSuccess() {
 
   return (
     <div className='h-screen flex items-center justify-center px-4'>
-			<Confetti width={window.innerWidth} height={window.innerHeight} gravity={0.1} style={{ zIndex: 99 }} numberOfPieces={60} recycle={true} />
+			<Confetti width={window.innerWidth} height={window.innerHeight} gravity={0.05} style={{ zIndex: 99 }} numberOfPieces={50} recycle={true} />
 
 			<div className='max-w-md w-full bg-gray-800 rounded-lg shadow-xl overflow-hidden relative z-10'>
 				<div className='p-6 sm:p-8'>

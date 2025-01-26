@@ -28,6 +28,6 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 app.listen(PORT, async() => {
-    dbConnect();
+    await dbConnect();
     console.log("listening to server, port:", PORT);
 })

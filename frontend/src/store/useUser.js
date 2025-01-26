@@ -83,7 +83,65 @@ const useUser = create((set, get) => ({
         finally {
             set({ checkingAuth: false });
         }
-    } 
+    },
+    
+    refreshToken: async() => {
+        if (get().checkingAuth) {
+            return;
+        }
+
+        set({ checkingAuth: true });
+
+        try {
+            const response = await apios.post('/auth/refresh-token');
+            return response.data;
+        }
+        catch(err) {
+            console.log("Cannot verify");
+        }
+        finally {
+            set({ checkingAuth: false });
+        }
+    }
 }))
 
 export default useUser
+
+
+let refreshPromise = null;
+
+apios.interceptors.response.use(
+    (response) => {
+        console.log("here", 115);
+        return response;
+    },
+    async(err) => {
+        const originalRequest = err.config;
+        console.log("here", 117);
+
+        if (err.response?.status == 401 && !originalRequest._retry)
+        {
+            originalRequest._retry = true;
+
+            try {
+                if (refreshPromise)
+                {
+                    await refreshPromise;
+                    return apios(originalRequest);
+                }
+
+                refreshPromise = useUser.getState().refreshToken();
+                await refreshPromise;
+
+                refreshPromise = null;
+
+                return apios(originalRequest);
+            }
+            catch(refreshErr) {
+                toast.error("You must login again", toastObj);
+            }
+        }
+        else
+            return Promise.reject(err);
+    }
+)
